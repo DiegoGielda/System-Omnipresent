@@ -1,34 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react'
 import './App.css'
+import Card from './components/Card'
+import Filter from './components/Filter'
+import Ordering from './components/Ordering'
+import SearchBar from './components/SearchBar'
+import SidebarMenu from './components/SidebarMenu'
+import ICard from './interfaces/ICard';
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const [dados, setDados] = useState<ICard[]>([]);
+
+  useEffect(() => {
+    fetch('https://my-json-server.typicode.com/MonicaHillman/codeconnect-api/publicacoes')
+      .then(resposta => resposta.json())
+      .then(inf => setDados(inf));
+  }, []);
 
   return (
-    <>
+    <div className='container'>
+      <SidebarMenu />
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <SearchBar />
+        <Filter />
+        <Ordering />
+        <ul className='list-card'>
+          {dados ? dados.map((item, index) => (
+            <li key={index}>
+              <Card
+                card={item}
+              />
+            </li>
+          )) : null}
+        </ul>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 
